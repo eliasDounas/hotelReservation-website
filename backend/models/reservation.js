@@ -24,10 +24,14 @@ const reservationSchema = new mongoose.Schema({
         type: String,
         required: true,
       },
+      clientId: {
+        type: mongoose.Schema.Types.ObjectId,
+        required: true,
+      },
       price: {
         type: Number,
         required: true,
-      }
+      },
     }, { timestamps: true });
 
 const Reservation = mongoose.model('Reservation', reservationSchema);

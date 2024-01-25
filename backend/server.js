@@ -5,6 +5,7 @@ const bcrypt = require('bcrypt');
 const Reservation = require('./models/reservation');
 const Client = require('./models/client');
 const Account = require('./models/account');
+const Availability = require('./models/availability');
 const cookieParser = require('cookie-parser');
 const cors = require('cors');
 const app = express();
@@ -17,7 +18,7 @@ app.use(cors());
 
 const dbURI = "mongodb+srv://smoothcriminal5698:HCqu60DBOdHe60Pr@hotel.tglhez2.mongodb.net/Hotel?retryWrites=true&w=majority";
 mongoose.connect(dbURI, { useNewUrlParser: true, useUnifiedTopology: true })
-  .then(result => console.log("Connected"))
+  .then(() => console.log("Connected"))
   .catch(err => console.log(err));
 
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -36,7 +37,8 @@ app.post('/signin', async (req, res) => {
     }
     res.cookie('userId', user._id, { httpOnly: true });
     res.cookie('email', user.email, { httpOnly: true });
-    res.json({ success: true, userId: user._id, email: user.email });
+    res.cookie('username', user.username, { httpOnly: true });
+    res.json({ success: true, userId: user._id, email: user.email, username: user.username });
 
 } catch (error) {
   console.error(error);
@@ -45,16 +47,21 @@ app.post('/signin', async (req, res) => {
 });
 app.post('/signup', async (req, res) => {
     try {
-      const { email, password } = req.body;
+      const { username, email, password } = req.body;
       const newEmail = email;
       const existingUser = await Account.findOne({ email: newEmail });
+      const existingUser2 = await Account.findOne({ username: username });
 
       if (existingUser) {
         return res.status(401).json({ error: 'Already existing email' });
     }
+      if (existingUser2) {
+      return res.status(401).json({ error: 'Already existing username, please select a different username' });
+    }
       const hashedPassword = await bcrypt.hash(password, 10);
   
       const newAccount = new Account({
+        username: username,
         email: newEmail,
         password: hashedPassword
       });
@@ -63,12 +70,52 @@ app.post('/signup', async (req, res) => {
       const user = await Account.findOne({ email: newEmail });
       res.cookie('userId', user._id, { httpOnly: true });
       res.cookie('email', user.email, { httpOnly: true });
-      res.json({ success: true, userId: user._id, email: user.email });
+      res.cookie('username', user.username, { httpOnly: true });
+      res.json({ success: true, userId: user._id, email: user.email, username: user.username });
   
 
     } catch (error) {
       console.error(error);
       res.status(500).send('Internal Server Error');
+    }
+  });
+
+  app.post('/check-availability', async (req, res) => {
+    try {
+      const { checkin, checkout } = req.body;
+  
+      // Create an object to store availability status for each type
+      const availabilityStatus = { A: true, B: true, C: true };
+  
+      // Loop through dates from checkin to checkout
+      const currentDate = new Date(checkin);
+      const endDate = new Date(checkout);
+  
+      while (currentDate < endDate) {
+        const availabilityResult = await Availability.findOne({ date: currentDate });
+  
+        if (availabilityResult) {
+          // Check if A, B, and C are greater than 0
+          if (availabilityResult.A <= 0) {
+            availabilityStatus.A = false;
+          }
+  
+          if (availabilityResult.B <= 0) {
+            availabilityStatus.B = false;
+          }
+  
+          if (availabilityResult.C <= 0) {
+            availabilityStatus.C = false;
+          }
+        }
+  
+        currentDate.setDate(currentDate.getDate() + 1);
+      }
+  
+      res.json(availabilityStatus);
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: 'Internal Server Error' });
     }
   });
 
@@ -89,57 +136,85 @@ app.post('/signup', async (req, res) => {
       city
     } = req.body;
     const usersId = req.cookies.userId;
-    let prix;
-    if (chambre === "1") {
-      prix = usersId === undefined ? 500 : 450;
-  } else if (chambre === "2") {
-      prix = usersId === undefined ? 600 : 540;
-  } else if (chambre === "3") {
-      prix = usersId === undefined ? 1000 : 900; 
-  };
+    let prix = 0;
+    if (chambre === "A") {
+      prix = usersId === undefined ? 54.78 : 49.30;
+    } else if (chambre === "B") {
+      prix = usersId === undefined ? 53.56 : 48.20;
+    } else if (chambre === "C") {
+      prix = usersId === undefined ? 94.78 : 85.30; 
+    };
 
-  if (promo === "SUMMER2024") {
+    if (promo === "SUMMER2024") {
+      if (chambre === "A") {
+      prix = usersId === undefined ? 49.30 : 43.82;
+    } else if (chambre === "B") {
+      prix = usersId === undefined ? 48.20 : 42.84;
+    } else if (chambre === "C") {
+      prix = usersId === undefined ? 85.30 : 75.80; 
+    };
       prix*=0.9;
     }
-    const reserv = new Reservation({
+    const cl = new Client({
+      
+      firstName: firstName,
+      lastName: lastName,
+      nationality: nationality,
+      phoneNumber: phoneNumber,
+      email: email,
+      billingAddress: billingAddress,
+      countryOrRegion: countryOrRegion,
+      city: city
+      
+    });
+    cl.save()
+    .then((result) => {
+      console.log("client ok")
+      let clientId = result._id;
+      const reserv = new Reservation({
         checkin: new Date(checkin),
         checkout: new Date(checkout),
         promo: promo,
-        chambre: "chambre" + chambre,
+        chambre: chambre,
         email: email,
         usersId: usersId === undefined ? " " : usersId.toString(),
+        clientId: clientId,
         price: prix
     });
-    const cl = new Client({
+      reserv.save()
+          .then(async (result) => {
+              console.log("rerv saved")
+              const checkinDate = new Date(checkin);
+              const checkoutDate = new Date(checkout);
+              const chambre = result.chambre;
+              const currentDate = new Date(checkinDate);
+              while (currentDate < checkoutDate) {
+                let availabilityResult = await Availability.findOne({ date: currentDate });
 
-        firstName: firstName,
-        lastName: lastName,
-        nationality: nationality,
-        phoneNumber: phoneNumber,
-        email: email,
-        billingAddress: billingAddress,
-        countryOrRegion: countryOrRegion,
-        city: city
+                if (!availabilityResult) {
+                  // If the document doesn't exist, create a new one with the default value
+                  availabilityResult = new Availability({ date: currentDate, A: 20, B: 30, C: 10 });
+                } 
 
-        });
-        reserv.save()
-            .then((result) => {
-                console.log("Reservation saved");
+              // Decrement A by 1
+              availabilityResult[chambre] -= 1;
+              // Save the updated or new document
+              await availabilityResult.save();
+              console.log("Availability updated for date:", currentDate);
+              currentDate.setDate(currentDate.getDate() + 1);
+            }
+
           })
           .catch(err => {
             console.log(err);
           });
-    
-        cl.save()
-            .then((result) => {
-              console.log("Client saved");
-              res.send();
-          })
-          .catch(err => {
-            console.log(err);
-          });
-        } catch (error) {
-          console.error(error);
-          res.status(500).send('Internal Server Error');
-        }
+      })
+      .catch(err => {
+        console.log(err);
       });
+      res.send(); 
+    } catch (error) {
+       console.error(error);
+       res.status(500).send('Internal Server Error');
+    }
+  });
