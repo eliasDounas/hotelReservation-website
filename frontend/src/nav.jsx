@@ -32,19 +32,23 @@ const Nav = () => {
         clearAuthCookies();
         setHasUserIdCookie(false);
     };
+    const handleContact = () => {
+
+        navigate("/contactUs");
+    }
     return ( 
         <>
-        <nav className="bg-blue-50 h-20 fixed w-full z-10 top-0">
+        <nav className="bg-blue-50 h-20 fixed w-full z-10 top-0 block">
             <div className="flex justify-around items-center h-20">
-            <img src={logo} alt="Logo" className='w-64 pt-7 h-32'/>
+            <img src={logo} alt="Logo" className='w-64 pt-7 h-32 cursor-pointer' onClick={() => navigate('/')}/>
                     
 
             <div className="flex justify-center items-center gap-16">
-                <a href="#home" className="text-2xl font-body font-medium hover:font-bold transform hover:scale-110 transition-transform">Description</a>
-                <a href="#about" className="text-2xl font-body font-medium hover:font-bold transform hover:scale-110 transition-transform">Chambres</a>
-                <a href="#services" className="text-2xl font-body font-medium hover:font-bold transform hover:scale-110 transition-transform">Localisation</a>
-                <a href="#contact" className="text-2xl font-body font-medium hover:font-bold transform hover:scale-110 transition-transform">Avis</a>
-                <a href="#contact" className="text-2xl font-body font-medium hover:font-bold transform hover:scale-110 transition-transform">Contact</a>
+                <a href="#description" className="text-2xl font-body font-medium hover:font-bold transform hover:scale-110 transition-transform">Description</a>
+                <a href="#chambres" className="text-2xl font-body font-medium hover:font-bold transform hover:scale-110 transition-transform">Chambres</a>
+                <a href="#localisation" className="text-2xl font-body font-medium hover:font-bold transform hover:scale-110 transition-transform">Localisation</a>
+                <a href="#avis" className="text-2xl font-body font-medium hover:font-bold transform hover:scale-110 transition-transform">Avis</a>
+                <a href="#contact" className="text-2xl font-body font-medium hover:font-bold transform hover:scale-110 transition-transform" onClick={handleContact}>Contact</a>
             </div>
 
             <div className="">

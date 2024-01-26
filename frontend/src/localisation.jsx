@@ -3,7 +3,7 @@ import './style.css';
 const Localisation = () => {
     return ( 
         <>
-        <div className="mx-64 flex flex-col justify-center items-center mb-10">
+        <div className="mx-64 flex flex-col justify-center items-center mb-10" id="localisation">
             <h2 className="font-body font-extrabold text-4xl mb-8 pt-6 self-start">Localisation</h2>
             <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3306.437143833026!2d-6.83285238940859!3d34.032656018653576!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0xda76b926283b669%3A0x8f3aaad1dd2b611d!2sFairmont%20Hotel%20%26%20Residences!5e0!3m2!1sen!2sma!4v1705936351555!5m2!1sen!2sma" width="600" height="450" style={{ border:"0" }} className=" border-0 w-full h-[500px]" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
             <h2 className="font-body font-bold text-2xl mb-4 pt-6 self-start">Hotel Fairmont</h2>

@@ -42,7 +42,7 @@ const Reservation = () => {
         
     
         if (response.ok) {
-            navigate('/');
+            navigate('/success');
         } else {
             console.error('Error during reservation');
             return;

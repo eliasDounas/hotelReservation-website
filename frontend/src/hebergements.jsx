@@ -75,7 +75,7 @@ const Hebergements = () => {
 
   return (
     <>
-      <h2 className="font-body font-extrabold text-4xl mb-8 ml-64">Nos hébergements</h2>
+      <h2 className="font-body font-extrabold text-4xl mb-8 ml-64" id="reservation">Nos hébergements</h2>
 
       <div className="mx-64 p-4">
         <form onSubmit={handleSubmit} className="flex flex-col space-y-4">

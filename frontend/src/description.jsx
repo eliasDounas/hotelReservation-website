@@ -2,7 +2,7 @@ import './style.css'
 const Description = () => {
     return ( 
         <> 
-        <div className="w-5/12 mt-32 ml-64 inline-block">
+        <div className="w-5/12 mt-32 ml-64 inline-block" id="description">
             <h2 className="font-body font-bold text-6xl mb-4">Hotel Fairmont</h2>
             <h4 className="font-body font-medium text-3xl mb-8">Une expérience en or pour un séjour inoubliable</h4>
             <p  className="text-xl opacity-85">L'hôtel Fairmont, niché dans un cadre pittoresque, vous accueille avec élégance et modernité. Idéalement situé à quelques pas de la gare, notre établissement offre une ambiance chaleureuse aux teintes orientales. Avec ses 120 chambres confortables, chacune équipée d'une salle de bain privée, d'un coin bureau, de la climatisation et d'une connexion Wi-Fi illimitée, vous trouverez ici tout le confort nécessaire pour un séjour agréable.

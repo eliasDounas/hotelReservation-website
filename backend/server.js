@@ -8,6 +8,8 @@ const Account = require('./models/account');
 const Availability = require('./models/availability');
 const cookieParser = require('cookie-parser');
 const cors = require('cors');
+const nodemailer = require('nodemailer');
+
 const app = express();
 app.listen(3001);
 
@@ -16,7 +18,7 @@ app.use(express.json());
 app.use(cookieParser());
 app.use(cors());
 
-const dbURI = "mongodb+srv://smoothcriminal5698:HCqu60DBOdHe60Pr@hotel.tglhez2.mongodb.net/Hotel?retryWrites=true&w=majority";
+const dbURI = "db URI goes here";
 mongoose.connect(dbURI, { useNewUrlParser: true, useUnifiedTopology: true })
   .then(() => console.log("Connected"))
   .catch(err => console.log(err));
@@ -79,6 +81,39 @@ app.post('/signup', async (req, res) => {
       res.status(500).send('Internal Server Error');
     }
   });
+
+app.post('/contact', (req, res) => {
+    // Extracting form data
+    const { name, email, message } = req.body;
+
+    // Creating a Nodemailer transporter using SMTP
+    let transporter = nodemailer.createTransport({
+        service: 'Gmail',
+        auth: {
+            user: 'your-email@gmail.com', // Your Gmail address
+            pass: 'your-gmail-password' // Your Gmail password
+        }
+    });
+
+    // Email message options
+    let mailOptions = {
+        from: 'your-email@gmail.com',
+        to: 'recipient@example.com', // Email address where you want to receive messages
+        subject: 'Message from Paramount Hotel website contact form',
+        text: `Name: ${name}\nEmail: ${email}\nMessage: ${message}`
+    };
+
+    // Sending the email
+    transporter.sendMail(mailOptions, (error, info) => {
+        if (error) {
+            console.log(error);
+            res.send('Error'); // Sending error response to the client
+        } else {
+            console.log('Email sent: ' + info.response);
+            res.send('Success'); // Sending success response to the client
+        }
+    });
+});
 
   app.post('/check-availability', async (req, res) => {
     try {

@@ -11,6 +11,7 @@ import SignUp from './signup.jsx'
 import Chambres from './chambres.jsx'
 import Reservation from './reservation.jsx'
 import Success from './reservationSuccess.jsx'
+import ContactForm from './contactUsForm.jsx'
 
 
 function App() {
@@ -26,10 +27,18 @@ function App() {
               <Hebergement />
               <Preview />
               <Localisation />
-              <Footer />
+              <Footer />      
+
             </> } />
           <Route path='login' element={<Login />} />
           <Route path='signup' element={<SignUp />} />
+
+          <Route path='contactUs' element={
+            <>
+              <Nav />
+              <ContactForm />
+              <Footer />
+            </> } />
           <Route path='chambres' element={
             <>
               <Nav />

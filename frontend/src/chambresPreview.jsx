@@ -8,7 +8,7 @@ const Preview = () => {
     const [selectedElement, setSelectedElement] = useState("litsSimples");
     return ( 
         <>
-        <nav className="flex gap-10 justify-center pt-10">
+        <nav className="flex gap-10 justify-center pt-10" id="chambres">
             <span onClick={() => setSelectedElement("litsSimples")}
             className={`cursor-pointer text-2xl font-body ${selectedElement === 'litsSimples' ? 'font-medium border-b-4 border-blue-900 pb' : ''}`}>Lit Simple</span>
             <span onClick={() => setSelectedElement("litDouble")}

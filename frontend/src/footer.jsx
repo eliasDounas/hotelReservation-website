@@ -1,7 +1,9 @@
 import './style.css'
 import accord from './assets/logo.svg'
+import { useNavigate } from "react-router-dom";
 
 const Footer = () => {
+  const navigate = useNavigate();
     return ( 
         <div className="flex justify-between py-8 px-64 mt-10 bg-slate-200 w-full">
             
@@ -18,11 +20,11 @@ const Footer = () => {
             </li></ul>
             <ul className="pr-24 flex-grow w-1/4 flex flex-col items-center">
                 <a className="font-bold font-mono text-xl">Navigation</a>
-                <a className="font-medium font-body text-lg mt-1 cursor-pointer">Home</a>
-                <a className="font-medium font-body text-lg mt-1 cursor-pointer">Reservation</a>
-                <a className="font-medium font-body text-lg mt-1 cursor-pointer">Localisation</a>
-                <a className="font-medium font-body text-lg mt-1 cursor-pointer">Avis Clients</a>
-                <a className="font-medium font-body text-lg mt-1  cursor-pointer">Contact</a>
+                <a onClick={() => navigate('/')} className="font-medium font-body text-lg mt-1 cursor-pointer">Home</a>
+                <a href="#reservation" className="font-medium font-body text-lg mt-1 cursor-pointer">Reservation</a>
+                <a href="#localisation" className="font-medium font-body text-lg mt-1 cursor-pointer">Localisation</a>
+                <a href="#avis" className="font-medium font-body text-lg mt-1 cursor-pointer">Avis Clients</a>
+                <a onClick={() => navigate('contactUs')} className="font-medium font-body text-lg mt-1  cursor-pointer">Contact</a>
             </ul>
             <ul className="w-2/5">
                 <img src={accord} alt="Logo" className="" />
