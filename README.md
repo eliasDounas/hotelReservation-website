@@ -25,7 +25,7 @@ Entering additional reservation details:
 
 Reservation Completed message:
 
-![Screenshot_8](https://github.com/eliasDounas/hotelReservation-website/assets/151151581/8075dbe9-add0-4dd1-8588-5d23b82d8c7d)
+![Screenshot_15](https://github.com/eliasDounas/hotelReservation-website/assets/151151581/2388d1a5-f374-4b62-a6ad-9696b3fa10ad)
 
 Contact-Us Form:
 
