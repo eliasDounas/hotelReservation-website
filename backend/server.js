@@ -2,13 +2,18 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
+const cookieSession = require('cookie-session');
+const passport = require('passport');
+const cookieParser = require('cookie-parser');
+const cors = require('cors');
+const nodemailer = require('nodemailer');
+
 const Reservation = require('./models/reservation');
 const Client = require('./models/client');
 const Account = require('./models/account');
 const Availability = require('./models/availability');
-const cookieParser = require('cookie-parser');
-const cors = require('cors');
-const nodemailer = require('nodemailer');
+
+const keys = require('./config/keys');
 
 const app = express();
 app.listen(3001);
@@ -18,13 +23,21 @@ app.use(express.json());
 app.use(cookieParser());
 app.use(cors());
 
-const dbURI = "db URI goes here";
+const dbURI = keys.mongodb.dbURI;
 mongoose.connect(dbURI, { useNewUrlParser: true, useUnifiedTopology: true })
   .then(() => console.log("Connected"))
   .catch(err => console.log(err));
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
+
+app.use(passport.initialize());
+app.use(passport.session());
+
+app.use(cookieSession({
+  maxAge: 24 * 60 * 60 * 1000,
+  keys: [keys.session.cookieKey]
+}));
 
 app.post('/signin', async (req, res) => {
     const { emails, passwords } = req.body;
@@ -81,6 +94,21 @@ app.post('/signup', async (req, res) => {
       res.status(500).send('Internal Server Error');
     }
   });
+
+  router.get('/auth/google', passport.authenticate('google', {
+    scope: ['profile']
+}));
+
+// callback route for google to redirect to
+// hand control to passport to use code to grab profile info
+router.get('/auth/google/redirect', passport.authenticate('google'), (req, res) => {
+    // res.send(req.user);
+      res.cookie('userId', req.user._id, { httpOnly: true });
+      res.cookie('email', req.user.email, { httpOnly: true });
+      res.cookie('username', req.user.username, { httpOnly: true });
+      res.json({ success: true, userId: req.user._id, email: req.user.email, username: req.user.username });
+});
+
 
 app.post('/contact', (req, res) => {
     // Extracting form data

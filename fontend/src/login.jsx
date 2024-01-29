@@ -42,6 +42,25 @@ const Login = () => {
         console.error('Error during login:', error.message);
       }
   };
+  const handleGoogleLogin = async () => {
+    try {
+    const response = await fetch('https://localhost:3001/auth/google');
+    if (response.ok) {
+      const data = CircularJSON.parse(CircularJSON.stringify(await response.json()));
+      Cookies.set('userId', data.userId);
+        Cookies.set('email', data.email);
+          Cookies.set('username', data.username);
+        // Redirect to /
+        navigate('/');
+    } else {
+        //display incorrect Email or Password message
+        setFailedLogin('true');
+        return;
+    } 
+  } catch (error) {
+    console.error('Error during login:', error.message);
+  }
+};
 
   return (
     <div className="fixed min-h-screen w-full flex flex-col items-center justify-center bg-cover bg-no-repeat bg-center bg-transparent" style={{ backgroundImage: `url(${bg})` }}>
@@ -102,7 +121,7 @@ const Login = () => {
           Log In
         </button>
         <button
-          className=" py-2 px-4 rounded-full border-2 shadow-sm shadow-black hover:shadow-none focus:outline-none w-full hover:border-black mt-1"
+          className=" py-2 px-4 rounded-full border-2 shadow-sm shadow-black hover:shadow-none focus:outline-none w-full hover:border-black mt-1" onClick={handleGoogleLogin}
         ><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 488 512" className='w-7 h-7 inline-block mr-6'><path d="M488 261.8C488 403.3 391.1 504 248 504 110.8 504 0 393.2 0 256S110.8 8 248 8c66.8 0 123 24.5 166.3 64.9l-67.5 64.9C258.5 52.6 94.3 116.6 94.3 256c0 86.5 69.1 156.6 153.7 156.6 98.2 0 135-70.4 140.8-106.9H248v-85.3h236.1c2.3 12.7 3.9 24.9 3.9 41.4z"/></svg>
           Sign In with Google 
         </button>
