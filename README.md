@@ -1,6 +1,7 @@
 # hotelReservation-website
 
 
+
 Main Page:
 
 ![Screenshot_3](https://github.com/eliasDounas/hotelReservation-website/assets/151151581/3d88e6b8-266e-40c3-a5d5-34ddb001e523)
@@ -21,7 +22,7 @@ Displaying the available rooms at the selected date alongside the reservation de
 
 Entering additional reservation details:
 
-![Screenshot_7](https://github.com/eliasDounas/hotelReservation-website/assets/151151581/6164f90f-4719-4599-9266-274cad31ddfe)
+![Screenshot_23](https://github.com/eliasDounas/hotelReservation-website/assets/151151581/8838a94c-8648-4b34-b049-de6ce5b0920e)
 
 Reservation Completed message:
 
