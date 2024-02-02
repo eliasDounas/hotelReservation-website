@@ -7,6 +7,7 @@ const passport = require('passport');
 const cookieParser = require('cookie-parser');
 const cors = require('cors');
 const nodemailer = require('nodemailer');
+const session = require('express-session');
 
 const Reservation = require('./models/reservation');
 const Client = require('./models/client');
@@ -22,22 +23,24 @@ app.listen(3001);
 app.use(express.json());
 app.use(cookieParser());
 app.use(cors());
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
 
 const dbURI = keys.mongodb.dbURI;
 mongoose.connect(dbURI, { useNewUrlParser: true, useUnifiedTopology: true })
   .then(() => console.log("Connected"))
   .catch(err => console.log(err));
 
-app.use(bodyParser.urlencoded({ extended: true }));
-app.use(bodyParser.json());
+app.use(session({
+  secret: keys.session.cookieKey,
+  resave: false,
+  saveUninitialized: false,
+}));
 
 app.use(passport.initialize());
 app.use(passport.session());
 
-app.use(cookieSession({
-  maxAge: 24 * 60 * 60 * 1000,
-  keys: [keys.session.cookieKey]
-}));
+
 
 app.post('/signin', async (req, res) => {
     const { emails, passwords } = req.body;
@@ -95,13 +98,13 @@ app.post('/signup', async (req, res) => {
     }
   });
 
-  router.get('/auth/google', passport.authenticate('google', {
+  app.get('/auth/google', passport.authenticate('google', {
     scope: ['profile']
 }));
 
 // callback route for google to redirect to
 // hand control to passport to use code to grab profile info
-router.get('/auth/google/redirect', passport.authenticate('google'), (req, res) => {
+app.get('/auth/google/redirect', passport.authenticate('google'), (req, res) => {
     // res.send(req.user);
       res.cookie('userId', req.user._id, { httpOnly: true });
       res.cookie('email', req.user.email, { httpOnly: true });
